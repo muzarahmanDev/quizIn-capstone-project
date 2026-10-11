@@ -35,5 +35,5 @@
 
 ```
 👤 Pengembang
-Nama: Muhammad Zaky Rahman
-Project: IBM Bob Capstone Project
+- **Nama: Muhammad Zaky Rahman**
+- **Project: IBM Bob Capstone Project**
