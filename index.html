@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="QuizIn — Platform kuis interaktif bergaya Quizizz" />
+  <title>QuizIn — Interactive Quiz Platform</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════════
+       APP HEADER — Branding + Role Switcher + Avatar
+  ════════════════════════════════════════════════ -->
+  <header class="app-header" id="app-header">
+    <div class="header-inner">
+
+      <!-- Logo -->
+      <a href="#" class="logo" id="btn-home" aria-label="QuizIn Home">
+        <span class="logo-quiz">Quiz</span><span class="logo-in">In</span>
+      </a>
+
+      <!-- Role Switcher -->
+      <div class="role-switcher" role="group" aria-label="Pilih peran pengguna">
+        <button
+          class="role-btn active"
+          id="btn-role-creator"
+          data-role="creator"
+          aria-pressed="true"
+        >
+          ✏️ Creator
+        </button>
+        <button
+          class="role-btn"
+          id="btn-role-player"
+          data-role="player"
+          aria-pressed="false"
+        >
+          🎮 Player
+        </button>
+      </div>
+
+      <!-- Avatar -->
+      <div class="avatar-wrap" id="avatar-wrap" aria-label="Profil pengguna">
+        <div class="avatar" id="avatar-img" aria-hidden="true">Q</div>
+        <span class="avatar-label" id="avatar-label">Creator</span>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- ═══════════════════════════════════════════════
+       MAIN — SPA view container
+  ════════════════════════════════════════════════ -->
+  <main class="app-main" id="app-main">
+
+    <!-- ─────────────────────────────────────────────
+         VIEW: HOME  (landing / welcome screen)
+    ──────────────────────────────────────────────── -->
+    <section class="view active" id="view-home" aria-label="Halaman Utama">
+      <div class="hero-card glass-card">
+        <div class="hero-icon" aria-hidden="true">⚡</div>
+        <h1 class="hero-title">Selamat Datang di <span class="logo-quiz">Quiz</span><span class="logo-in">In</span></h1>
+        <p class="hero-sub">Platform kuis interaktif real-time. Buat, bagikan, dan mainkan kuis seru bersama semua orang.</p>
+        <div class="hero-actions">
+          <button class="btn btn-primary" id="btn-start-creator">✏️ Buat Kuis</button>
+          <button class="btn btn-secondary" id="btn-start-player">🎮 Mainkan Kuis</button>
+        </div>
+      </div>
+
+      <!-- Quick stats bar -->
+      <div class="stats-bar">
+        <div class="stat-item glass-card">
+          <span class="stat-num" id="stat-total-quizzes">0</span>
+          <span class="stat-label">Kuis Tersedia</span>
+        </div>
+        <div class="stat-item glass-card">
+          <span class="stat-num" id="stat-total-questions">0</span>
+          <span class="stat-label">Total Soal</span>
+        </div>
+        <div class="stat-item glass-card">
+          <span class="stat-num" id="stat-best-score">—</span>
+          <span class="stat-label">Skor Terbaik</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─────────────────────────────────────────────
+         VIEW: CREATOR  (quiz builder)
+    ──────────────────────────────────────────────── -->
+    <section class="view" id="view-creator" aria-label="Mode Creator" hidden>
+
+      <div class="creator-layout">
+
+        <!-- Quiz Metadata Form -->
+        <div class="glass-card creator-meta-card">
+          <h2 class="card-title">📋 Info Kuis</h2>
+
+          <div class="form-group">
+            <label class="form-label" for="quiz-title">Judul Kuis <span class="required">*</span></label>
+            <input class="form-input" type="text" id="quiz-title" placeholder="Contoh: Trivia Sains Seru" maxlength="80" required />
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="quiz-category">Kategori</label>
+              <select class="form-input" id="quiz-category">
+                <option value="Umum">Umum</option>
+                <option value="Sains">Sains</option>
+                <option value="Matematika">Matematika</option>
+                <option value="Sejarah">Sejarah</option>
+                <option value="Teknologi">Teknologi</option>
+                <option value="Bahasa">Bahasa</option>
+                <option value="Olahraga">Olahraga</option>
+                <option value="Hiburan">Hiburan</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="quiz-time-limit">Waktu / Soal (detik)</label>
+              <select class="form-input" id="quiz-time-limit">
+                <option value="10">10 detik</option>
+                <option value="15">15 detik</option>
+                <option value="20" selected>20 detik</option>
+                <option value="30">30 detik</option>
+                <option value="45">45 detik</option>
+                <option value="60">60 detik</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Import / Save buttons -->
+          <div class="creator-actions">
+            <label class="btn btn-ghost" for="import-file" title="Impor kuis dari file JSON">
+              📥 Impor JSON
+            </label>
+            <input type="file" id="import-file" accept=".json" style="display:none" aria-label="Impor file JSON" />
+            <button class="btn btn-success" id="btn-save-quiz">💾 Simpan Kuis</button>
+          </div>
+        </div>
+
+        <!-- Question Builder -->
+        <div class="glass-card creator-questions-card">
+          <div class="questions-header">
+            <h2 class="card-title">❓ Daftar Soal</h2>
+            <button class="btn btn-primary btn-sm" id="btn-add-question">＋ Tambah Soal</button>
+          </div>
+
+          <!-- Dynamic question list rendered by JS -->
+          <div class="questions-list" id="questions-list" aria-live="polite">
+            <!-- Question cards injected here -->
+          </div>
+
+          <!-- Empty state -->
+          <div class="empty-state" id="empty-questions">
+            <div class="empty-icon" aria-hidden="true">📝</div>
+            <p>Belum ada soal. Klik <strong>＋ Tambah Soal</strong> untuk mulai.</p>
+          </div>
+        </div>
+
+      </div><!-- /creator-layout -->
+    </section>
+
+    <!-- ─────────────────────────────────────────────
+         VIEW: LOBBY  (quiz selection for player)
+    ──────────────────────────────────────────────── -->
+    <section class="view" id="view-lobby" aria-label="Lobi Kuis" hidden>
+      <div class="lobby-header">
+        <h2 class="section-title">🎮 Pilih Kuis</h2>
+        <input class="form-input search-input" type="search" id="lobby-search"
+               placeholder="Cari kuis…" aria-label="Cari kuis" />
+      </div>
+
+      <!-- Quiz cards grid rendered by JS -->
+      <div class="quiz-grid" id="quiz-grid" aria-live="polite">
+      </div>
+
+      <!-- Empty lobby state -->
+      <div class="empty-state" id="empty-lobby" style="display:none">
+        <div class="empty-icon" aria-hidden="true">🗂️</div>
+        <p>Belum ada kuis tersedia. Minta Creator untuk membuat kuis terlebih dahulu!</p>
+      </div>
+    </section>
+
+    <!-- ─────────────────────────────────────────────
+         VIEW: QUIZ  (live quiz gameplay)
+    ──────────────────────────────────────────────── -->
+    <section class="view" id="view-quiz" aria-label="Kuis Berlangsung" hidden>
+
+      <!-- Progress bar (top) -->
+      <div class="quiz-topbar">
+        <div class="quiz-progress-wrap" aria-label="Progres kuis">
+          <div class="quiz-progress-bar" id="quiz-progress-bar"></div>
+        </div>
+        <div class="quiz-meta-row">
+          <span class="quiz-counter" id="quiz-counter">Soal 1 dari 10</span>
+          <div class="quiz-meta-right">
+            <!-- Streak badge — shown/hidden by JS -->
+            <div class="streak-badge" id="streak-badge" hidden aria-live="polite"></div>
+            <span class="quiz-score-live" id="quiz-score-live">🏆 0</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Timer ring + countdown -->
+      <div class="timer-section" aria-label="Timer">
+        <div class="timer-ring-wrap">
+          <svg class="timer-ring" viewBox="0 0 120 120" aria-hidden="true">
+            <circle class="timer-ring-bg" cx="60" cy="60" r="50"/>
+            <circle class="timer-ring-fg" id="timer-ring-fg" cx="60" cy="60" r="50"
+                    stroke-dasharray="314.16" stroke-dashoffset="0"/>
+          </svg>
+          <span class="timer-number" id="timer-number">20</span>
+        </div>
+      </div>
+
+      <!-- Question card -->
+      <div class="question-card glass-card" id="question-card">
+        <p class="question-text" id="question-text">Soal akan muncul di sini.</p>
+      </div>
+
+      <!-- Answer options grid -->
+      <div class="options-grid" id="options-grid" role="list" aria-label="Pilihan jawaban">
+        <button class="option-card" id="opt-A" data-key="A" role="listitem">
+          <span class="option-key">A</span>
+          <span class="option-text" id="opt-A-text">Pilihan A</span>
+        </button>
+        <button class="option-card" id="opt-B" data-key="B" role="listitem">
+          <span class="option-key">B</span>
+          <span class="option-text" id="opt-B-text">Pilihan B</span>
+        </button>
+        <button class="option-card" id="opt-C" data-key="C" role="listitem">
+          <span class="option-key">C</span>
+          <span class="option-text" id="opt-C-text">Pilihan C</span>
+        </button>
+        <button class="option-card" id="opt-D" data-key="D" role="listitem">
+          <span class="option-key">D</span>
+          <span class="option-text" id="opt-D-text">Pilihan D</span>
+        </button>
+      </div>
+
+      <!-- Feedback overlay (shown briefly after answer) -->
+      <div class="feedback-overlay" id="feedback-overlay" aria-live="assertive" hidden>
+        <div class="feedback-content" id="feedback-content"></div>
+      </div>
+
+    </section>
+
+    <!-- ─────────────────────────────────────────────
+         VIEW: RESULTS  (end screen + scoreboard)
+    ──────────────────────────────────────────────── -->
+    <section class="view" id="view-results" aria-label="Hasil Kuis" hidden>
+      <div class="results-card glass-card">
+        <div class="results-trophy" aria-hidden="true" id="results-trophy">🏆</div>
+        <h2 class="results-title" id="results-title">Kuis Selesai!</h2>
+        <p class="results-quiz-name" id="results-quiz-name"></p>
+
+        <div class="results-stats-grid">
+          <div class="result-stat glass-card">
+            <span class="result-stat-val" id="res-score">0</span>
+            <span class="result-stat-label">Total Skor</span>
+          </div>
+          <div class="result-stat glass-card">
+            <span class="result-stat-val" id="res-accuracy">0%</span>
+            <span class="result-stat-label">Akurasi</span>
+          </div>
+          <div class="result-stat glass-card">
+            <span class="result-stat-val" id="res-correct">0/0</span>
+            <span class="result-stat-label">Benar</span>
+          </div>
+          <div class="result-stat glass-card">
+            <span class="result-stat-val" id="res-time">0 dtk</span>
+            <span class="result-stat-label">Waktu</span>
+          </div>
+        </div>
+
+        <!-- Per-question breakdown -->
+        <div class="results-breakdown" id="results-breakdown"></div>
+
+        <div class="results-actions">
+          <button class="btn btn-primary" id="btn-retry-quiz">🔄 Ulangi Kuis</button>
+          <button class="btn btn-secondary" id="btn-choose-quiz">🗂️ Pilih Kuis Lain</button>
+          <button class="btn btn-review" id="btn-review-answers">🔍 Tinjau Jawaban</button>
+          <button class="btn btn-ghost" id="btn-export-result">📊 Ekspor Hasil</button>
+        </div>
+      </div>
+    </section>
+
+  </main><!-- /app-main -->
+
+  <!-- Toast notification -->
+  <div class="toast" id="toast" role="alert" aria-live="polite"></div>
+
+  <!-- ═══════════════════════════════════════════════
+       REVIEW MODAL — "Tinjau Jawaban" overlay
+  ════════════════════════════════════════════════ -->
+  <div class="modal-backdrop" id="modal-backdrop" hidden aria-modal="true" role="dialog" aria-labelledby="modal-title">
+    <div class="modal-panel glass-card">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modal-title">🔍 Tinjau Jawaban</h3>
+        <button class="modal-close" id="modal-close" aria-label="Tutup modal">✕</button>
+      </div>
+      <!-- Summary pills -->
+      <div class="modal-summary" id="modal-summary"></div>
+      <!-- Full question-by-question list -->
+      <div class="modal-body" id="modal-body"></div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
